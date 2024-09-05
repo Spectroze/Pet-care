@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '../components/ui/button'
-import LoginModal from '../modals/logIn'
+import LoginModal from '../modals/signin'
 import { PawPrintIcon, BellIcon } from '../app/icon/icon'
 
 export default function Header() {
@@ -20,32 +20,38 @@ export default function Header() {
                 <span className="text-xl font-bold">PetCare Hub</span>
             </Link>
             <nav className="hidden md:flex items-center gap-6">
-                <Link href="/home" className="hover:underline" prefetch={false}>
+                <Link
+                    href="/homepage"
+                    className="hover:underline"
+                    prefetch={false}>
                     Home
                 </Link>
                 <Link
-                    href="/services"
+                    href="../homepage/services"
                     className="hover:underline"
                     prefetch={false}>
                     Services
                 </Link>
                 <Link
-                    href="/about"
+                    href="../homepage/about"
                     className="hover:underline"
                     prefetch={false}>
                     About Us
                 </Link>
                 <Link
-                    href="/testimonial"
+                    href="../homepage/testimonial"
                     className="hover:underline"
                     prefetch={false}>
                     Testimonials
                 </Link>
-                <Link href="/form" className="hover:underline" prefetch={false}>
+                <Link
+                    href="../homepage/form"
+                    className="hover:underline"
+                    prefetch={false}>
                     Form
                 </Link>
                 <Link
-                    href="/contact"
+                    href="../homepage/contact"
                     className="hover:underline"
                     prefetch={false}>
                     Contact

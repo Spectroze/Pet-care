@@ -4,28 +4,33 @@ import { Input } from '../components/ui/input'
 import { Button } from '../components/ui/button'
 import { Label } from '../components/ui/label'
 import { PawPrint, X } from 'lucide-react'
-import LoginModal from './signin'
+import SignupModal from './signup'
 
-export default function SignupModal({ onClose, onSignup }) {
-    const [isLoginModalOpen, setLoginModalOpen] = useState(false)
-    const [isAnimating, setIsAnimating] = useState(true)
-    const [fullName, setFullName] = useState('')
+export default function LoginModal({ onClose, onLogin }) {
+    const [isSignupModalOpen, setSignupModalOpen] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
+    const [isAnimating, setIsAnimating] = useState(true)
 
-    const handleSignup = async (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault()
         setError('')
 
         try {
-            const res = await fetch('/api/signup', {
+            const res = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password, fullName })
+                body: JSON.stringify({ email, password })
             })
+
+            const contentType = res.headers.get('Content-Type')
+
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Response is not JSON')
+            }
 
             const data = await res.json()
 
@@ -33,8 +38,8 @@ export default function SignupModal({ onClose, onSignup }) {
                 throw new Error(data.message || 'Something went wrong')
             }
 
-            // Handle successful signup
-            onSignup()
+            // Handle successful login
+            onLogin(data.token)
             handleClose()
         } catch (error) {
             setError(error.message)
@@ -43,7 +48,9 @@ export default function SignupModal({ onClose, onSignup }) {
 
     const handleClose = () => {
         setIsAnimating(false)
-        setTimeout(onClose, 300)
+        setTimeout(() => {
+            onClose()
+        }, 300) // Delay to match the animation duration
     }
 
     return (
@@ -62,34 +69,34 @@ export default function SignupModal({ onClose, onSignup }) {
                     <button
                         onClick={handleClose}
                         className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                        aria-label="Close signup modal">
+                        aria-label="Close login modal">
                         <X size={24} />
                     </button>
                     <div className="flex flex-col md:flex-row">
-                        {/* Left side section */}
+                        <div className="md:w-1/2 bg-blue-600 p-8 flex flex-col justify-center items-center text-white">
+                            <div className="mb-6">
+                                <PawPrint size={80} className="text-white" />
+                            </div>
+                            <h1 className="text-3xl font-bold mb-4">
+                                Welcome to Pethub!
+                            </h1>
+                            <p className="text-center text-lg">
+                                Your one-stop solution for pet care management.
+                            </p>
+                            <div className="mt-6 flex items-center justify-center space-x-2 text-white pb-1">
+                                <PawPrint size={40} />
+                                <span className="text-2xl font-semibold">
+                                    PetCare Hub
+                                </span>
+                                <PawPrint size={40} />
+                            </div>
+                        </div>
+
                         <div className="md:w-1/2 p-8">
                             <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                                Sign Up to Pethub
+                                Log In to Pethub
                             </h2>
-                            <form className="space-y-4" onSubmit={handleSignup}>
-                                {error && (
-                                    <p className="text-red-500 text-center mb-4">
-                                        {error}
-                                    </p>
-                                )}
-                                <div className="space-y-2 text-black">
-                                    <Label htmlFor="fullName">Full Name</Label>
-                                    <Input
-                                        id="fullName"
-                                        type="text"
-                                        placeholder="Enter your full name"
-                                        value={fullName}
-                                        onChange={(e) =>
-                                            setFullName(e.target.value)
-                                        }
-                                        required
-                                    />
-                                </div>
+                            <form className="space-y-4" onSubmit={handleLogin}>
                                 <div className="space-y-2 text-black">
                                     <Label htmlFor="email">Email Address</Label>
                                     <Input
@@ -108,25 +115,31 @@ export default function SignupModal({ onClose, onSignup }) {
                                     <Input
                                         id="password"
                                         type="password"
-                                        placeholder="Create a password"
+                                        placeholder="Enter your password"
                                         value={password}
                                         onChange={(e) =>
                                             setPassword(e.target.value)
                                         }
                                         required
                                     />
+                                    <div className="text-right">
+                                        <a
+                                            href="#"
+                                            className="text-sm text-blue-600 hover:underline">
+                                            Forgot Password?
+                                        </a>
+                                    </div>
                                 </div>
-
                                 <Button
                                     type="submit"
                                     className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200">
-                                    Sign Up
+                                    Log In
                                 </Button>
                             </form>
 
                             <div className="mt-6">
                                 <p className="text-center text-sm text-gray-600 mb-2">
-                                    Or sign up with:
+                                    Or log in with:
                                 </p>
                                 <div className="flex space-x-4">
                                     <Button
@@ -169,43 +182,28 @@ export default function SignupModal({ onClose, onSignup }) {
                                 </div>
                             </div>
                             <p className="mt-6 text-center text-sm text-gray-600">
-                                Already have an account?{' '}
+                                Don't have an account?{' '}
                                 <a
-                                    onClick={() => setLoginModalOpen(true)}
+                                    onClick={() => setSignupModalOpen(true)}
                                     href="#"
                                     className="text-blue-600 hover:underline transition-colors duration-200">
-                                    Log In
+                                    Sign Up
                                 </a>
                             </p>
-                        </div>
-
-                        {/* Right side section */}
-                        <div className="md:w-1/2 bg-blue-600 p-8 flex flex-col justify-center items-center text-white">
-                            <div className="mb-6">
-                                <PawPrint size={80} className="text-white" />
-                            </div>
-                            <h1 className="text-3xl font-bold mb-4">
-                                Join Pethub Today!
-                            </h1>
-                            <p className="text-center text-lg">
-                                Your one-stop solution for pet care management.
-                            </p>
-                            <div className="mt-6 flex items-center justify-center space-x-2 text-white pb-1">
-                                <PawPrint size={40} />
-                                <span className="text-2xl font-semibold">
-                                    PetCare Hub
-                                </span>
-                                <PawPrint size={40} />
-                            </div>
+                            {error && (
+                                <p className="mt-4 text-red-600 text-center">
+                                    {error}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
 
-            {isLoginModalOpen && (
-                <LoginModal
-                    onClose={() => setLoginModalOpen(false)}
-                    onLogin={onSignup}
+            {isSignupModalOpen && (
+                <SignupModal
+                    onClose={() => setSignupModalOpen(false)}
+                    onSignup={() => setSignupModalOpen(false)}
                 />
             )}
         </>

@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ['latin'] })
 // Function to fetch and return dynamic metadata (could be extended to fetch from API)
 const fetchMetadata = () => {
     return {
-        title: 'Dynamic Next App',
+        title: 'Pet Care',
         description: 'A dynamically configured Next.js application'
     }
 }
@@ -20,18 +20,14 @@ const fetchMetadata = () => {
 export default function RootLayout({ children }) {
     const [metadata, setMetadata] = useState(fetchMetadata())
 
-    // Dynamic updates for metadata, e.g., based on route or other factors
-    useEffect(() => {
-        // Example: Update metadata based on route or user state
-        // setMetadata(fetchMetadata())
-    }, [])
+    useEffect(() => {}, [])
 
     return (
         <html lang="en">
             <head>
                 <title>{metadata.title}</title>
                 <meta name="description" content={metadata.description} />
-                {/* Additional meta tags and SEO optimizations */}
+                {}
             </head>
             <body className={inter.className}>
                 <LayoutProvider>
