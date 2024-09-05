@@ -1,341 +1,865 @@
 'use client'
-
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
-    LogOut,
-    Home,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
+import {
+    Bell,
+    Calendar,
+    FileText,
     MessageSquare,
     Settings,
+    Star,
+    DollarSign,
+    Clipboard,
+    Home,
     User,
-    Mail,
-    Phone,
-    PlusCircle,
-    History,
-    Bell,
-    MessageCircle
+    Calendar as CalendarIcon,
+    FileText as HealthIcon,
+    Bell as NotificationIcon,
+    Star as FeedbackIcon,
+    Clipboard as CarePlanIcon,
+    Settings as SettingsIcon,
+    Menu,
+    ChevronLeft,
+    ChevronRight,
+    LogOut
 } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { useRouter, usePathname } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 
-// Configuration for sidebar navigation
-const navItems = [
-    { label: 'Dashboard', icon: <Home className="mr-2 h-4 w-4" />, route: '/' },
-    {
-        label: 'Service History',
-        icon: <History className="mr-2 h-4 w-4" />,
-        route: '/service-history'
-    },
-    {
-        label: 'Notifications Center',
-        icon: <Bell className="mr-2 h-4 w-4" />,
-        route: '/notifications'
-    },
-    {
-        label: 'Message Center',
-        icon: <MessageCircle className="mr-2 h-4 w-4" />,
-        route: '/messages'
-    },
-    {
-        label: 'Feedback',
-        icon: <MessageSquare className="mr-2 h-4 w-4" />,
-        route: '/user-dashboard/feedback'
-    },
-    {
-        label: 'Settings',
-        icon: <Settings className="mr-2 h-4 w-4" />,
-        route: '/settings'
-    }
-]
-
-export default function PetOwnerDashboard() {
-    const router = useRouter()
-    const pathname = usePathname()
+export default function PetcareDashboard() {
+    const [activeSection, setActiveSection] = useState('overview')
     const [sidebarOpen, setSidebarOpen] = useState(true)
-    const [showFeedback, setShowFeedback] = useState(false)
 
-    useEffect(() => {
-        const openRoutes = [
-            '/feedback',
-            '/settings',
-            '/',
-            '/user-dashboard/feedback'
-        ]
-        if (openRoutes.some((route) => pathname.startsWith(route))) {
-            setSidebarOpen(true)
-        }
-        setShowFeedback(pathname.startsWith('/user-dashboard/feedback'))
-    }, [pathname])
-
-    const handleNavigation = (route) => {
-        router.push(route)
-        if (route === '/user-dashboard/feedback') {
-            setSidebarOpen(true)
-            setShowFeedback(true)
-        } else {
-            setShowFeedback(false)
+    const renderContent = () => {
+        switch (activeSection) {
+            case 'overview':
+                return (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Overview</CardTitle>
+                            <CardDescription>
+                                Quick snapshot of your pet care information
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                                <Card>
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium">
+                                            Upcoming Appointments
+                                        </CardTitle>
+                                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-2xl font-bold">
+                                            3
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                                <Card>
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium">
+                                            Active Care Plans
+                                        </CardTitle>
+                                        <Clipboard className="h-4 w-4 text-muted-foreground" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-2xl font-bold">
+                                            2
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                                <Card>
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium">
+                                            Unread Messages
+                                        </CardTitle>
+                                        <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-2xl font-bold">
+                                            5
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                                <Card>
+                                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                        <CardTitle className="text-sm font-medium">
+                                            Pending Reviews
+                                        </CardTitle>
+                                        <Star className="h-4 w-4 text-muted-foreground" />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="text-2xl font-bold">
+                                            2
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )
+            case 'profile':
+                return (
+                    <>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>User Profile</CardTitle>
+                                <CardDescription>
+                                    Manage your personal and pet information
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-6">
+                                    <div className="flex items-center space-x-4">
+                                        <Avatar className="h-20 w-20">
+                                            <AvatarImage
+                                                src="/placeholder.svg?height=80&width=80"
+                                                alt="User"
+                                            />
+                                            <AvatarFallback>JD</AvatarFallback>
+                                        </Avatar>
+                                        <Button>Change Photo</Button>
+                                    </div>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="name">Name</Label>
+                                            <Input
+                                                id="name"
+                                                placeholder="John Doe"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email">Email</Label>
+                                            <Input
+                                                id="email"
+                                                placeholder="john@example.com"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="bio">Bio</Label>
+                                        <Textarea
+                                            id="bio"
+                                            placeholder="Tell us about yourself and your pets"
+                                        />
+                                    </div>
+                                    <Button>Save Changes</Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card className="mt-6">
+                            <CardHeader>
+                                <CardTitle>Pet Profiles</CardTitle>
+                                <CardDescription>
+                                    Manage your pets' information
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    <div className="flex items-center space-x-4">
+                                        <Avatar className="h-16 w-16">
+                                            <AvatarImage
+                                                src="/placeholder.svg?height=64&width=64"
+                                                alt="Pet"
+                                            />
+                                            <AvatarFallback>PET</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <h3 className="text-lg font-semibold">
+                                                Buddy
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground">
+                                                Golden Retriever, 3 years old
+                                            </p>
+                                        </div>
+                                        <Button variant="outline">Edit</Button>
+                                    </div>
+                                    <div className="flex items-center space-x-4">
+                                        <Avatar className="h-16 w-16">
+                                            <AvatarImage
+                                                src="/placeholder.svg?height=64&width=64"
+                                                alt="Pet"
+                                            />
+                                            <AvatarFallback>PET</AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <h3 className="text-lg font-semibold">
+                                                Whiskers
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground">
+                                                Tabby Cat, 2 years old
+                                            </p>
+                                        </div>
+                                        <Button variant="outline">Edit</Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                            <CardFooter>
+                                <Button>Add New Pet</Button>
+                            </CardFooter>
+                        </Card>
+                    </>
+                )
+            case 'appointments':
+                return (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Appointments</CardTitle>
+                            <CardDescription>
+                                Schedule and manage your pet care appointments
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center p-4 bg-muted rounded-lg">
+                                    <div>
+                                        <h3 className="font-semibold">
+                                            Veterinary Check-up
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            July 15, 2023 at 2:00 PM
+                                        </p>
+                                    </div>
+                                    <Button variant="outline">
+                                        Reschedule
+                                    </Button>
+                                </div>
+                                <div className="flex justify-between items-center p-4 bg-muted rounded-lg">
+                                    <div>
+                                        <h3 className="font-semibold">
+                                            Grooming Session
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            July 22, 2023 at 10:00 AM
+                                        </p>
+                                    </div>
+                                    <Button variant="outline">
+                                        Reschedule
+                                    </Button>
+                                </div>
+                                <div className="flex justify-between items-center p-4 bg-muted rounded-lg">
+                                    <div>
+                                        <h3 className="font-semibold">
+                                            Training Class
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            July 29, 2023 at 3:00 PM
+                                        </p>
+                                    </div>
+                                    <Button variant="outline">
+                                        Reschedule
+                                    </Button>
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button className="w-full">
+                                Book New Appointment
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                )
+            case 'health':
+                return (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Health Records</CardTitle>
+                            <CardDescription>
+                                Manage your pets' health information
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="p-4 bg-muted rounded-lg">
+                                    <h3 className="font-semibold mb-2">
+                                        Vaccinations
+                                    </h3>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li>Rabies - June 15, 2023</li>
+                                        <li>Distemper - June 15, 2023</li>
+                                        <li>Bordetella - January 10, 2023</li>
+                                    </ul>
+                                </div>
+                                <div className="p-4 bg-muted rounded-lg">
+                                    <h3 className="font-semibold mb-2">
+                                        Medications
+                                    </h3>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li>Heartworm Prevention - Monthly</li>
+                                        <li>
+                                            Flea and Tick Prevention - Monthly
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="p-4 bg-muted rounded-lg">
+                                    <h3 className="font-semibold mb-2">
+                                        Recent Treatments
+                                    </h3>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li>Dental Cleaning - May 5, 2023</li>
+                                        <li>Allergy Test - April 12, 2023</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button className="w-full">
+                                Add Health Record
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                )
+            case 'notifications':
+                return (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Notifications</CardTitle>
+                            <CardDescription>
+                                Manage your alerts and reminders
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                                    <div className="flex items-center space-x-2">
+                                        <Bell className="h-5 w-5 text-muted-foreground" />
+                                        <div>
+                                            <h3 className="font-semibold">
+                                                Upcoming Vet Appointment
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground">
+                                                Tomorrow at 2:00 PM
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <Button variant="outline" size="sm">
+                                        Dismiss
+                                    </Button>
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                                    <div className="flex items-center space-x-2">
+                                        <Bell className="h-5 w-5 text-muted-foreground" />
+                                        <div>
+                                            <h3 className="font-semibold">
+                                                Medication Reminder
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground">
+                                                Give heartworm prevention pill
+                                                today
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <Button variant="outline" size="sm">
+                                        Dismiss
+                                    </Button>
+                                </div>
+                                <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                                    <div className="flex items-center space-x-2">
+                                        <Bell className="h-5 w-5 text-muted-foreground" />
+                                        <div>
+                                            <h3 className="font-semibold">
+                                                Vaccination Due
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground">
+                                                Bordetella vaccination due in 2
+                                                weeks
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <Button variant="outline" size="sm">
+                                        Dismiss
+                                    </Button>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )
+            case 'feedback':
+                return (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Feedback and Reviews</CardTitle>
+                            <CardDescription>
+                                Share your experiences and read others' reviews
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="p-4 bg-muted rounded-lg">
+                                    <h3 className="font-semibold mb-2">
+                                        Your Recent Reviews
+                                    </h3>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center space-x-2">
+                                            <Star className="h-5 w-5 text-yellow-400" />
+                                            <Star className="h-5 w-5 text-yellow-400" />
+                                            <Star className="h-5 w-5 text-yellow-400" />
+                                            <Star className="h-5 w-5 text-yellow-400" />
+                                            <Star className="h-5 w-5 text-muted-foreground" />
+                                            <span className="text-sm font-medium">
+                                                Happy Paws Veterinary Clinic
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-muted-foreground">
+                                            Great service and caring staff.
+                                            Highly recommended!
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="p-4 bg-muted rounded-lg">
+                                    <h3 className="font-semibold mb-2">
+                                        Pending Reviews
+                                    </h3>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm font-medium">
+                                                Fluffy's Grooming Salon
+                                            </span>
+                                            <Button variant="outline" size="sm">
+                                                Leave Review
+                                            </Button>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm font-medium">
+                                                Paw Perfect Training Center
+                                            </span>
+                                            <Button variant="outline" size="sm">
+                                                Leave Review
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )
+            case 'care-plans':
+                return (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Pet Care Plans</CardTitle>
+                            <CardDescription>
+                                Manage feeding, grooming, and training schedules
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="p-4 bg-muted rounded-lg">
+                                    <h3 className="font-semibold mb-2">
+                                        Feeding Schedule
+                                    </h3>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li>
+                                            Breakfast: 7:00 AM - 1 cup dry food
+                                        </li>
+                                        <li>
+                                            Dinner: 6:00 PM - 1 cup dry food +
+                                            1/4 cup wet food
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="p-4 bg-muted rounded-lg">
+                                    <h3 className="font-semibold mb-2">
+                                        Grooming Routine
+                                    </h3>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li>Brush teeth daily</li>
+                                        <li>Brush coat 3 times a week</li>
+                                        <li>Bath every 2 weeks</li>
+                                    </ul>
+                                </div>
+                                <div className="p-4 bg-muted rounded-lg">
+                                    <h3 className="font-semibold mb-2">
+                                        Training Program
+                                    </h3>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li>
+                                            15 minutes of obedience training
+                                            daily
+                                        </li>
+                                        <li>
+                                            30 minutes of playtime and exercise
+                                            twice daily
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button className="w-full">Edit Care Plans</Button>
+                        </CardFooter>
+                    </Card>
+                )
+            case 'settings':
+                return (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Settings and Preferences</CardTitle>
+                            <CardDescription>
+                                Customize your dashboard experience
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="email-notifications">
+                                            Email Notifications
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Receive email alerts for important
+                                            updates
+                                        </p>
+                                    </div>
+                                    <Switch id="email-notifications" />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="sms-notifications">
+                                            SMS Notifications
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Receive text message alerts for
+                                            urgent matters
+                                        </p>
+                                    </div>
+                                    <Switch id="sms-notifications" />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="data-sharing">
+                                            Data Sharing
+                                        </Label>
+                                        <p className="text-sm text-muted-foreground">
+                                            Allow sharing of non-sensitive data
+                                            for service improvements
+                                        </p>
+                                    </div>
+                                    <Switch id="data-sharing" />
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter>
+                            <Button className="w-full">Save Preferences</Button>
+                        </CardFooter>
+                    </Card>
+                )
+            default:
+                return null
         }
     }
 
     return (
-        <div className="flex h-screen overflow-hidden bg-gray-50">
-            {/* Hamburger Menu */}
-            <button
-                className="fixed top-4 left-4 z-50 p-2 bg-gray-700 text-white rounded-md focus:outline-none"
-                onClick={() => setSidebarOpen(!sidebarOpen)}>
-                <motion.div
-                    className="w-6 h-5 flex flex-col justify-between"
-                    initial={false}
-                    animate={sidebarOpen ? 'open' : 'closed'}>
-                    <motion.span
-                        className="w-full h-0.5 bg-white"
-                        variants={{
-                            closed: { rotate: 0, y: 0 },
-                            open: { rotate: 45, y: 9 }
-                        }}
-                    />
-                    <motion.span
-                        className="w-full h-0.5 bg-white"
-                        variants={{
-                            closed: { opacity: 1 },
-                            open: { opacity: 0 }
-                        }}
-                    />
-                    <motion.span
-                        className="w-full h-0.5 bg-white"
-                        variants={{
-                            closed: { rotate: 0, y: 0 },
-                            open: { rotate: -45, y: -9 }
-                        }}
-                    />
-                </motion.div>
-            </button>
-
+        <div className="flex h-screen bg-gray-100">
             {/* Sidebar */}
-            <AnimatePresence>
-                {sidebarOpen && (
-                    <motion.aside
-                        initial={{ x: '-100%' }}
-                        animate={{ x: 0 }}
-                        exit={{ x: '-100%' }}
-                        transition={{
-                            type: 'spring',
-                            stiffness: 300,
-                            damping: 30
-                        }}
-                        className="fixed inset-y-0 left-0 z-40 w-64 bg-gray-800 text-white p-4 flex flex-col overflow-auto">
-                        {/* Profile Photo Upload */}
-                        <div className="mb-6 text-center">
-                            <label
-                                htmlFor="profile-upload"
-                                className="cursor-pointer">
-                                <Avatar className="w-20 h-20 mx-auto mb-2 border-4 border-white shadow-lg">
-                                    <AvatarImage
-                                        src="/placeholder.svg"
-                                        alt="Profile"
-                                    />
-                                    <AvatarFallback>AG</AvatarFallback>
-                                </Avatar>
-                                <span className="text-xs bg-white text-gray-800 px-2 py-1 rounded-full shadow-md hover:bg-gray-100 transition-colors duration-200">
-                                    Upload Photo
-                                </span>
-                            </label>
-                            <input
-                                id="profile-upload"
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={(e) => {
-                                    console.log(
-                                        'File selected:',
-                                        e.target.files[0]
-                                    )
-                                }}
+            <aside
+                className={`bg-white ${
+                    sidebarOpen ? 'w-64' : 'w-20'
+                } min-h-screen p-4 transition-all duration-300 ease-in-out`}>
+                <div className="flex flex-col h-full">
+                    {/* User Profile */}
+                    <div className="flex flex-col items-center space-y-2 mb-6">
+                        <Avatar className="h-20 w-20">
+                            <AvatarImage
+                                src="/placeholder.svg?height=80&width=80"
+                                alt="User"
                             />
-                        </div>
+                            <AvatarFallback>JD</AvatarFallback>
+                        </Avatar>
+                        {sidebarOpen && (
+                            <div className="text-center">
+                                <p className="text-sm font-medium text-gray-900">
+                                    John Doe
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    Pet Parent
+                                </p>
+                            </div>
+                        )}
+                    </div>
 
-                        {/* Profile Information */}
-                        <div className="mb-6 bg-gray-200 rounded-lg p-4">
-                            <h2 className="text-lg font-semibold mb-2 text-center text-black">
-                                Allod Galindo
-                            </h2>
-                            <ul className="space-y-2 text-sm text-black">
-                                <li className="flex items-center">
-                                    <User className="mr-2 h-4 w-4 text-gray-600" />
-                                    Pet Owner
-                                </li>
-                                <li className="flex items-center">
-                                    <Mail className="mr-2 h-4 w-4 text-gray-600" />
-                                    allod@example.com
-                                </li>
-                                <li className="flex items-center">
-                                    <Phone className="mr-2 h-4 w-4 text-gray-600" />
-                                    (555) 123-4567
-                                </li>
-                            </ul>
-                        </div>
+                    {/* Navigation */}
+                    <nav className="space-y-2 flex-1">
+                        <Button
+                            variant={
+                                activeSection === 'overview'
+                                    ? 'secondary'
+                                    : 'ghost'
+                            }
+                            className={`w-full justify-start ${
+                                !sidebarOpen && 'px-2'
+                            }`}
+                            onClick={() => setActiveSection('overview')}>
+                            <Home
+                                className={`h-5 w-5 ${sidebarOpen && 'mr-2'}`}
+                            />
+                            {sidebarOpen && <span>Overview</span>}
+                        </Button>
+                        <Button
+                            variant={
+                                activeSection === 'profile'
+                                    ? 'secondary'
+                                    : 'ghost'
+                            }
+                            className={`w-full justify-start ${
+                                !sidebarOpen && 'px-2'
+                            }`}
+                            onClick={() => setActiveSection('profile')}>
+                            <User
+                                className={`h-5 w-5 ${sidebarOpen && 'mr-2'}`}
+                            />
+                            {sidebarOpen && <span>Profile</span>}
+                        </Button>
+                        <Button
+                            variant={
+                                activeSection === 'appointments'
+                                    ? 'secondary'
+                                    : 'ghost'
+                            }
+                            className={`w-full justify-start ${
+                                !sidebarOpen && 'px-2'
+                            }`}
+                            onClick={() => setActiveSection('appointments')}>
+                            <CalendarIcon
+                                className={`h-5 w-5 ${sidebarOpen && 'mr-2'}`}
+                            />
+                            {sidebarOpen && <span>Appointments</span>}
+                        </Button>
+                        <Button
+                            variant={
+                                activeSection === 'health'
+                                    ? 'secondary'
+                                    : 'ghost'
+                            }
+                            className={`w-full justify-start ${
+                                !sidebarOpen && 'px-2'
+                            }`}
+                            onClick={() => setActiveSection('health')}>
+                            <HealthIcon
+                                className={`h-5 w-5 ${sidebarOpen && 'mr-2'}`}
+                            />
+                            {sidebarOpen && <span>Health Records</span>}
+                        </Button>
+                        <Button
+                            variant={
+                                activeSection === 'notifications'
+                                    ? 'secondary'
+                                    : 'ghost'
+                            }
+                            className={`w-full justify-start ${
+                                !sidebarOpen && 'px-2'
+                            }`}
+                            onClick={() => setActiveSection('notifications')}>
+                            <NotificationIcon
+                                className={`h-5 w-5 ${sidebarOpen && 'mr-2'}`}
+                            />
+                            {sidebarOpen && <span>Notifications</span>}
+                        </Button>
+                        <Button
+                            variant={
+                                activeSection === 'feedback'
+                                    ? 'secondary'
+                                    : 'ghost'
+                            }
+                            className={`w-full justify-start ${
+                                !sidebarOpen && 'px-2'
+                            }`}
+                            onClick={() => setActiveSection('feedback')}>
+                            <FeedbackIcon
+                                className={`h-5 w-5 ${sidebarOpen && 'mr-2'}`}
+                            />
+                            {sidebarOpen && <span>Feedback</span>}
+                        </Button>
+                        <Button
+                            variant={
+                                activeSection === 'care-plans'
+                                    ? 'secondary'
+                                    : 'ghost'
+                            }
+                            className={`w-full justify-start ${
+                                !sidebarOpen && 'px-2'
+                            }`}
+                            onClick={() => setActiveSection('care-plans')}>
+                            <CarePlanIcon
+                                className={`h-5 w-5 ${sidebarOpen && 'mr-2'}`}
+                            />
+                            {sidebarOpen && <span>Care Plans</span>}
+                        </Button>
+                        <Button
+                            variant={
+                                activeSection === 'settings'
+                                    ? 'secondary'
+                                    : 'ghost'
+                            }
+                            className={`w-full justify-start ${
+                                !sidebarOpen && 'px-2'
+                            }`}
+                            onClick={() => setActiveSection('settings')}>
+                            <SettingsIcon
+                                className={`h-5 w-5 ${sidebarOpen && 'mr-2'}`}
+                            />
+                            {sidebarOpen && <span>Settings</span>}
+                        </Button>
+                    </nav>
 
-                        <Separator className="my-4 bg-gray-300" />
+                    {/* Sidebar Toggle */}
+                    <Button
+                        variant="ghost"
+                        className="w-full justify-center mt-auto"
+                        onClick={() => setSidebarOpen(!sidebarOpen)}>
+                        {sidebarOpen ? (
+                            <ChevronLeft className="h-5 w-5" />
+                        ) : (
+                            <ChevronRight className="h-5 w-5" />
+                        )}
+                    </Button>
+                </div>
+            </aside>
 
-                        <nav className="flex-grow">
-                            <ul className="space-y-2">
-                                {navItems.map((item, index) => (
-                                    <li key={index}>
-                                        <Button
-                                            variant="ghost"
-                                            className="w-full justify-start text-white hover:bg-gray-600 hover:text-white"
-                                            onClick={() =>
-                                                handleNavigation(item.route)
-                                            }>
-                                            {item.icon}
-                                            {item.label}
-                                        </Button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                        <div className="mt-auto">
-                            <Button
-                                variant="ghost"
-                                className="w-full justify-start text-white hover:bg-gray-600 hover:text-white">
-                                <LogOut className="mr-2 h-4 w-4" />
-                                Log Out
-                            </Button>
-                        </div>
-                    </motion.aside>
-                )}
-            </AnimatePresence>
-
-            {/* Main Content */}
-            <main
-                className={`flex-1 p-8 overflow-auto transition-all duration-300 ease-in-out ${
-                    sidebarOpen ? 'ml-64' : 'ml-0'
-                }`}>
-                <header className="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-md">
-                    <h2 className="text-3xl font-bold text-gray-800">
-                        Welcome back, Pet-care mamshie!
-                    </h2>
-                    <Avatar className="w-12 h-12 border-2 border-gray-400">
-                        <AvatarImage
-                            src="/placeholder.svg"
-                            alt="Allod Galindo"
-                        />
-                        <AvatarFallback>AG</AvatarFallback>
-                    </Avatar>
+            {/* Main content */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <header className="flex items-center justify-between p-4 bg-white border-b">
+                    <div className="flex items-center">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="md:hidden mr-2"
+                            onClick={() => setSidebarOpen(!sidebarOpen)}>
+                            <Menu className="h-6 w-6" />
+                        </Button>
+                        <h1 className="text-xl font-bold">Petcare Dashboard</h1>
+                    </div>
+                    <Button>Add New Pet</Button>
                 </header>
 
-                <div className="flex">
-                    <div className={`flex-1 ${showFeedback ? 'mr-4' : ''}`}>
-                        <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                            {/* Header for the Combined Card */}
-                            <CardHeader className="flex flex-col space-y-4 bg-gray-800 text-gray-300 rounded-t-lg">
-                                <div className="flex flex-row items-center justify-between">
-                                    <CardTitle className="text-lg font-semibold">
-                                        My Appointments
-                                    </CardTitle>
-                                    <Button
-                                        size="sm"
-                                        className="bg-gray-100 text-gray-600 hover:bg-gray-200">
-                                        <PlusCircle className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                                <div className="flex flex-row items-center justify-between">
-                                    <CardTitle className="text-lg font-semibold">
-                                        Quick Actions
-                                    </CardTitle>
-                                </div>
-                            </CardHeader>
-                            {/* Content for the Combined Card */}
-                            <CardContent className="pt-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {/* Appointments Section */}
-                                    <div className="space-y-4">
-                                        {/* Example appointments data */}
-                                        {[
-                                            {
-                                                title: 'Vet Appointment',
-                                                date: '2024-09-10',
-                                                time: '10:00 AM',
-                                                description: 'Annual check-up'
-                                            },
-                                            {
-                                                title: 'Training Session',
-                                                date: '2024-09-15',
-                                                time: '2:00 PM',
-                                                description:
-                                                    'Obedience training'
-                                            }
-                                        ].map((appointment, index) => (
-                                            <div
-                                                key={index}
-                                                className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                                                <h3 className="text-lg font-semibold text-gray-800">
-                                                    {appointment.title}
-                                                </h3>
-                                                <p className="text-gray-600">
-                                                    {appointment.date} -{' '}
-                                                    {appointment.time}
-                                                </p>
-                                                <p className="text-gray-500">
-                                                    {appointment.description}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4">
+                    {renderContent()}
 
-                                    {/* Quick Actions Section */}
-                                    <div className="space-y-4">
-                                        <div className="p-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                                            <h4 className="text-lg font-semibold text-gray-800">
-                                                Schedule a New Appointment
-                                            </h4>
-                                            <Button
-                                                className="mt-2"
-                                                onClick={() =>
-                                                    handleNavigation(
-                                                        '/schedule'
-                                                    )
-                                                }>
-                                                Schedule Now
-                                            </Button>
-                                        </div>
-                                        {/* Add more quick actions here */}
+                    <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Message Center</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium">
+                                            Dr. Smith (Vet)
+                                        </span>
+                                        <Button variant="outline" size="sm">
+                                            View
+                                        </Button>
                                     </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium">
+                                            Grooming Salon
+                                        </span>
+                                        <Button variant="outline" size="sm">
+                                            View
+                                        </Button>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium">
+                                            Pet Sitter
+                                        </span>
+                                        <Button variant="outline" size="sm">
+                                            View
+                                        </Button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                            <CardFooter>
+                                <Button className="w-full">New Message</Button>
+                            </CardFooter>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Billing & Subscriptions</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium">
+                                            Premium Plan
+                                        </span>
+                                        <span className="text-sm text-muted-foreground">
+                                            $19.99/month
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm font-medium">
+                                            Next billing date
+                                        </span>
+                                        <span className="text-sm text-muted-foreground">
+                                            August 1, 2023
+                                        </span>
+                                    </div>
+                                </div>
+                            </CardContent>
+                            <CardFooter>
+                                <Button className="w-full">
+                                    Manage Subscription
+                                </Button>
+                            </CardFooter>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Quick Links</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full">
+                                        <FileText className="mr-2 h-4 w-4" />
+                                        Pet Insurance
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full">
+                                        <MessageSquare className="mr-2 h-4 w-4" />
+                                        Community Forum
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full">
+                                        <DollarSign className="mr-2 h-4 w-4" />
+                                        Donate
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full">
+                                        <Settings className="mr-2 h-4 w-4" />
+                                        Help Center
+                                    </Button>
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
-
-                    <AnimatePresence>
-                        {showFeedback && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 20 }}
-                                transition={{ duration: 0.3 }}
-                                className="w-1/3">
-                                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                                    <CardHeader className="bg-gray-800 text-gray-300 rounded-t-lg">
-                                        <CardTitle className="text-lg font-semibold">
-                                            Feedback
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="pt-6">
-                                        {/* Add your feedback form or content here */}
-                                        <p>
-                                            This is where the feedback features
-                                            will be displayed.
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
     )
 }

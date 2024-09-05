@@ -57,13 +57,13 @@ export default function LoginModal({ onClose, onLogin }) {
         <>
             <div
                 className="fixed inset-0 bg-black flex items-center justify-center p-4"
-                style={{ backdropFilter: 'blur(5px)', zIndex: 9999 }}
+                style={{ backdropFilter: 'none', zIndex: 9999 }} // Remove blur effect if needed
                 onClick={handleClose}>
                 <div
                     className={`bg-white rounded-xl shadow-lg overflow-hidden max-w-4xl w-full relative transition-all duration-300 ease-in-out ${
                         isAnimating
                             ? 'translate-y-0 opacity-100'
-                            : 'translate-y-4 opacity-0'
+                            : 'translate-y-4 opacity-100'
                     }`}
                     onClick={(e) => e.stopPropagation()}>
                     <button
