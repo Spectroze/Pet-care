@@ -20,13 +20,17 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "types": [
+      "node"
+    ] // Add this line to include Node.js types
   },
   "include": [
     "next-env.d.ts",
-    ".next/types/**/*.ts",
+    "src/**/*",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
