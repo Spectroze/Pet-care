@@ -14,7 +14,7 @@ export default function Header() {
     }
 
     return (
-        <header className="bg-primary opacity-80 text-primary-foreground py-4 px-6 flex items-center justify-between fixed top-0 left-0 w-full z-50">
+        <header className="bg-primary opacity-95 text-primary-foreground py-4 px-6 flex items-center justify-between fixed top-0 left-0 w-full z-50">
             <Link href="/" className="flex items-center gap-2" prefetch={false}>
                 <PawPrintIcon className="h-6 w-6" />
                 <span className="text-xl font-bold">PetCare Hub</span>
