@@ -18,74 +18,45 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useRouter, usePathname } from 'next/navigation'
+import { useLayout } from '../../context/LayoutContext'
 import { motion, AnimatePresence } from 'framer-motion'
-
-// Configuration for sidebar navigation
-const navItems = [
-    { label: 'Dashboard', icon: <Home className="mr-2 h-4 w-4" />, route: '/' },
-    {
-        label: 'Service History',
-        icon: <History className="mr-2 h-4 w-4" />,
-        route: '/service-history'
-    },
-    {
-        label: 'Notifications Center',
-        icon: <Bell className="mr-2 h-4 w-4" />,
-        route: '/notifications'
-    },
-    {
-        label: 'Message Center',
-        icon: <MessageCircle className="mr-2 h-4 w-4" />,
-        route: '/messages'
-    },
-    {
-        label: 'Feedback',
-        icon: <MessageSquare className="mr-2 h-4 w-4" />,
-        route: '/user-dashboard/feedback'
-    },
-    {
-        label: 'Settings',
-        icon: <Settings className="mr-2 h-4 w-4" />,
-        route: '/settings'
-    }
-]
-
+import { useRouter, usePathname } from 'next/navigation'
+import Feedback from '../user-dashboard/feedback/page'
 export default function PetOwnerDashboard() {
     const router = useRouter()
     const pathname = usePathname()
-    const [sidebarOpen, setSidebarOpen] = useState(true)
-    const [showFeedback, setShowFeedback] = useState(false)
+
+    const handleClick = () => {
+        router.push('/user-dashboard/feedback')
+    }
+
+    const { setShowHeader, setShowFooter } = useLayout()
+    const [sidebarOpen, setSidebarOpen] = useState(false)
 
     useEffect(() => {
-        const openRoutes = [
-            '/feedback',
-            '/settings',
-            '/',
-            '/user-dashboard/feedback'
-        ]
-        if (openRoutes.some((route) => pathname.startsWith(route))) {
-            setSidebarOpen(true)
-        }
-        setShowFeedback(pathname.startsWith('/user-dashboard/feedback'))
-    }, [pathname])
+        setShowHeader(false)
+        setShowFooter(false)
 
-    const handleNavigation = (route) => {
-        router.push(route)
-        if (route === '/user-dashboard/feedback') {
-            setSidebarOpen(true)
-            setShowFeedback(true)
-        } else {
-            setShowFeedback(false)
+        return () => {
+            setShowHeader(true)
+            setShowFooter(true)
         }
+    }, [setShowHeader, setShowFooter])
+
+    const [appointments, setAppointments] = useState([])
+
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen)
     }
+
+    const isFeedbackPage = pathname === '/user-dashboard/feedback'
 
     return (
         <div className="flex h-screen overflow-hidden bg-gray-50">
-            {/* Hamburger Menu */}
+            {/* Hamburger Menu - Visible on all pages */}
             <button
                 className="fixed top-4 left-4 z-50 p-2 bg-gray-700 text-white rounded-md focus:outline-none"
-                onClick={() => setSidebarOpen(!sidebarOpen)}>
+                onClick={toggleSidebar}>
                 <motion.div
                     className="w-6 h-5 flex flex-col justify-between"
                     initial={false}
@@ -114,7 +85,7 @@ export default function PetOwnerDashboard() {
                 </motion.div>
             </button>
 
-            {/* Sidebar */}
+            {/* Sidebar - Visible when toggled */}
             <AnimatePresence>
                 {sidebarOpen && (
                     <motion.aside
@@ -180,21 +151,66 @@ export default function PetOwnerDashboard() {
 
                         <Separator className="my-4 bg-gray-300" />
 
+                        <div className="flex items-center mb-6"></div>
                         <nav className="flex-grow">
                             <ul className="space-y-2">
-                                {navItems.map((item, index) => (
-                                    <li key={index}>
-                                        <Button
-                                            variant="ghost"
-                                            className="w-full justify-start text-white hover:bg-gray-600 hover:text-white"
-                                            onClick={() =>
-                                                handleNavigation(item.route)
-                                            }>
-                                            {item.icon}
-                                            {item.label}
-                                        </Button>
-                                    </li>
-                                ))}
+                                <li>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full justify-start text-white hover:bg-gray-600 hover:text-white"
+                                        onClick={() =>
+                                            router.push('/user-dashboard')
+                                        }>
+                                        <Home className="mr-2 h-4 w-4" />
+                                        Dashboard
+                                    </Button>
+                                </li>
+                                <li>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full justify-start text-white hover:bg-gray-600 hover:text-white">
+                                        <History className="mr-2 h-4 w-4" />
+                                        Service History
+                                    </Button>
+                                </li>
+                                <li>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full justify-start text-white hover:bg-gray-600 hover:text-white">
+                                        <Bell className="mr-2 h-4 w-4" />
+                                        Notifications Center
+                                    </Button>
+                                </li>
+                                <li>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full justify-start text-white hover:bg-gray-600 hover:text-white">
+                                        <MessageCircle className="mr-2 h-4 w-4" />
+                                        Message Center
+                                    </Button>
+                                </li>
+                                <li>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full justify-start text-white hover:bg-gray-600 hover:text-white"
+                                        onClick={handleClick}>
+                                        <MessageSquare className="mr-2 h-4 w-4" />
+                                        Feedback
+                                    </Button>
+                                </li>
+                                <li>
+                                    <Button
+                                        variant="ghost"
+                                        className="w-full justify-start text-white hover:bg-gray-600 hover:text-white"
+                                        onClick={() =>
+                                            router.push(
+                                                '/user-dashboard/settings'
+                                            )
+                                        }>
+                                        <Settings className="mr-2 h-4 w-4" />
+                                        Settings
+                                    </Button>
+                                </li>
                             </ul>
                         </nav>
                         <div className="mt-auto">
@@ -212,7 +228,7 @@ export default function PetOwnerDashboard() {
             {/* Main Content */}
             <main
                 className={`flex-1 p-8 overflow-auto transition-all duration-300 ease-in-out ${
-                    sidebarOpen ? 'ml-64' : 'ml-0'
+                    sidebarOpen ? 'sm:ml-64' : ''
                 }`}>
                 <header className="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-md">
                     <h2 className="text-3xl font-bold text-gray-800">
@@ -227,114 +243,26 @@ export default function PetOwnerDashboard() {
                     </Avatar>
                 </header>
 
-                <div className="flex">
-                    <div className={`flex-1 ${showFeedback ? 'mr-4' : ''}`}>
-                        <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                            {/* Header for the Combined Card */}
-                            <CardHeader className="flex flex-col space-y-4 bg-gray-800 text-gray-300 rounded-t-lg">
-                                <div className="flex flex-row items-center justify-between">
-                                    <CardTitle className="text-lg font-semibold">
-                                        My Appointments
-                                    </CardTitle>
-                                    <Button
-                                        size="sm"
-                                        className="bg-gray-100 text-gray-600 hover:bg-gray-200">
-                                        <PlusCircle className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                                <div className="flex flex-row items-center justify-between">
-                                    <CardTitle className="text-lg font-semibold">
-                                        Quick Actions
-                                    </CardTitle>
-                                </div>
-                            </CardHeader>
-                            {/* Content for the Combined Card */}
-                            <CardContent className="pt-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {/* Appointments Section */}
-                                    <div className="space-y-4">
-                                        {/* Example appointments data */}
-                                        {[
-                                            {
-                                                title: 'Vet Appointment',
-                                                date: '2024-09-10',
-                                                time: '10:00 AM',
-                                                description: 'Annual check-up'
-                                            },
-                                            {
-                                                title: 'Training Session',
-                                                date: '2024-09-15',
-                                                time: '2:00 PM',
-                                                description:
-                                                    'Obedience training'
-                                            }
-                                        ].map((appointment, index) => (
-                                            <div
-                                                key={index}
-                                                className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                                                <h3 className="text-lg font-semibold text-gray-800">
-                                                    {appointment.title}
-                                                </h3>
-                                                <p className="text-gray-600">
-                                                    {appointment.date} -{' '}
-                                                    {appointment.time}
-                                                </p>
-                                                <p className="text-gray-500">
-                                                    {appointment.description}
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
+                {isFeedbackPage ? (
+                    <Feedback />
+                ) : (
+                    <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        {/* Header for the Combined Card */}
+                        <CardHeader className="flex flex-col space-y-2">
+                            <CardTitle>Manage Appointments</CardTitle>
+                        </CardHeader>
 
-                                    {/* Quick Actions Section */}
-                                    <div className="space-y-4">
-                                        <div className="p-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
-                                            <h4 className="text-lg font-semibold text-gray-800">
-                                                Schedule a New Appointment
-                                            </h4>
-                                            <Button
-                                                className="mt-2"
-                                                onClick={() =>
-                                                    handleNavigation(
-                                                        '/schedule'
-                                                    )
-                                                }>
-                                                Schedule Now
-                                            </Button>
-                                        </div>
-                                        {/* Add more quick actions here */}
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    <AnimatePresence>
-                        {showFeedback && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 20 }}
-                                transition={{ duration: 0.3 }}
-                                className="w-1/3">
-                                <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-                                    <CardHeader className="bg-gray-800 text-gray-300 rounded-t-lg">
-                                        <CardTitle className="text-lg font-semibold">
-                                            Feedback
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="pt-6">
-                                        {/* Add your feedback form or content here */}
-                                        <p>
-                                            This is where the feedback features
-                                            will be displayed.
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
+                        {/* Body content */}
+                        <CardContent>
+                            <div className="text-center">
+                                <Button variant="secondary">
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    Add New Appointment
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
             </main>
         </div>
     )

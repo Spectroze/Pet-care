@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -15,7 +14,6 @@ export default function Feedback() {
     const [feedback, setFeedback] = useState('')
     const [rating, setRating] = useState(0)
     const [reviews, setReviews] = useState([])
-
     const handleSubmit = (e) => {
         e.preventDefault()
         setReviews([...reviews, { name, email, feedback, rating }])
