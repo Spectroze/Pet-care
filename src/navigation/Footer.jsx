@@ -1,4 +1,6 @@
 import React from "react";
+import { Facebook, Instagram, Twitter } from "lucide-react"; // Adjust based on your icon library
+import Link from "next/link"; // Ensure you're using the correct link component
 
 export default function Footer() {
   return (
@@ -10,19 +12,21 @@ export default function Footer() {
             <p>Caring for your pets like family</p>
           </div>
           <div className="flex space-x-4">
-            <a href="#" className="hover:text-[#F5A623] transition-colors">
-              Facebook
-            </a>
-            <a href="#" className="hover:text-[#F5A623] transition-colors">
-              Twitter
-            </a>
-            <a href="#" className="hover:text-[#F5A623] transition-colors">
-              Instagram
-            </a>
+            <Link href="https://facebook.com">
+              <Facebook className="h-6 w-6 text-blue-600 hover:text-blue-800 mx-2" />
+            </Link>
+            <Link href="https://instagram.com">
+              <Instagram className="h-6 w-6 text-pink-500 hover:text-pink-700 mx-2" />
+            </Link>
+            <Link href="https://twitter.com">
+              <Twitter className="h-6 w-6 text-blue-400 hover:text-blue-600 mx-2" />
+            </Link>
           </div>
         </div>
         <div className="mt-8 text-center">
-          <p>&copy; 2023 PetCare Hub. All rights reserved.</p>
+          <p className="text-sm text-gray-600">
+            &copy; {new Date().getFullYear()} PetCare Hub. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

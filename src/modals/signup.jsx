@@ -1,10 +1,12 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Input } from '../components/ui/input'
 import { Button } from '../components/ui/button'
 import { Label } from '../components/ui/label'
-import { PawPrint, X } from 'lucide-react'
+import { PawPrint, X, CheckCircle } from 'lucide-react'
 import LoginModal from './signin'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 export default function SignupModal({ onClose, onSignup }) {
     const [isLoginModalOpen, setLoginModalOpen] = useState(false)
@@ -13,10 +15,46 @@ export default function SignupModal({ onClose, onSignup }) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
+    const [isPasswordValid, setIsPasswordValid] = useState(false)
+    const router = useRouter()
+    const { data: session, status: sessionStatus } = useSession()
+
+    useEffect(() => {
+        if (sessionStatus === 'authenticated') {
+            router.replace('/dashboard')
+        }
+    }, [sessionStatus, router])
+
+    const isValidEmail = (email) => {
+        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+        return emailRegex.test(email)
+    }
+
+    const validatePassword = (password) => {
+        const passwordCriteria =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/
+        return passwordCriteria.test(password)
+    }
+
+    const handlePasswordChange = (e) => {
+        const value = e.target.value
+        setPassword(value)
+        setIsPasswordValid(validatePassword(value))
+    }
 
     const handleSignup = async (e) => {
         e.preventDefault()
         setError('')
+
+        if (!isValidEmail(email)) {
+            setError('Email is invalid')
+            return
+        }
+
+        if (!isPasswordValid) {
+            setError('Password is invalid')
+            return
+        }
 
         try {
             const res = await fetch('/api/signup', {
@@ -27,23 +65,29 @@ export default function SignupModal({ onClose, onSignup }) {
                 body: JSON.stringify({ email, password, fullName })
             })
 
-            const data = await res.json()
-
-            if (!res.ok) {
-                throw new Error(data.message || 'Something went wrong')
+            if (res.status === 400) {
+                setError('This email is already registered')
+            } else if (res.status === 200) {
+                setError('')
+                router.push('/login')
+                onSignup()
+                handleClose()
+            } else {
+                setError('Error, try again')
             }
-
-            // Handle successful signup
-            onSignup()
-            handleClose()
         } catch (error) {
-            setError(error.message)
+            setError('Error, try again')
+            console.log(error)
         }
     }
 
     const handleClose = () => {
         setIsAnimating(false)
         setTimeout(onClose, 300)
+    }
+
+    if (sessionStatus === 'loading') {
+        return <h1>Loading...</h1>
     }
 
     return (
@@ -110,11 +154,24 @@ export default function SignupModal({ onClose, onSignup }) {
                                         type="password"
                                         placeholder="Create a password"
                                         value={password}
-                                        onChange={(e) =>
-                                            setPassword(e.target.value)
-                                        }
+                                        onChange={handlePasswordChange}
                                         required
                                     />
+                                    <div className="flex items-center mt-2">
+                                        {isPasswordValid ? (
+                                            <CheckCircle
+                                                size={24}
+                                                className="text-green-500"
+                                            />
+                                        ) : (
+                                            <div className="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
+                                        )}
+                                        <p className="ml-2 text-sm">
+                                            Must start with a letter, include at
+                                            least one number, one lowercase
+                                            letter, and one uppercase letter.
+                                        </p>
+                                    </div>
                                 </div>
 
                                 <Button

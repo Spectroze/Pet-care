@@ -5,8 +5,8 @@ import {
     CarouselItem,
     CarouselNext,
     CarouselPrevious
-} from '../../../components/ui/carousel'
-import { Card, CardContent } from '../../../components/ui/card'
+} from '@/components/ui/carousel'
+import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { StarIcon } from '../../icon/icon'
 

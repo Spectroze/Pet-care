@@ -1,5 +1,7 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSession, signIn } from 'next-auth/react'
 import { Input } from '../components/ui/input'
 import { Button } from '../components/ui/button'
 import { Label } from '../components/ui/label'
@@ -7,42 +9,49 @@ import { PawPrint, X } from 'lucide-react'
 import SignupModal from './signup'
 
 export default function LoginModal({ onClose, onLogin }) {
+    const router = useRouter()
+    const { data: session, status: sessionStatus } = useSession()
     const [isSignupModalOpen, setSignupModalOpen] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [isAnimating, setIsAnimating] = useState(true)
 
+    useEffect(() => {
+        if (sessionStatus === 'authenticated') {
+            router.replace('/user-dashboard')
+        }
+    }, [sessionStatus, router])
+
+    const isValidEmail = (email) => {
+        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+        return emailRegex.test(email)
+    }
+
     const handleLogin = async (e) => {
         e.preventDefault()
         setError('')
 
-        try {
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            })
+        if (!isValidEmail(email)) {
+            setError('Email is invalid')
+            return
+        }
 
-            const contentType = res.headers.get('Content-Type')
+        if (!password || password.length < 8) {
+            setError('Password is invalid')
+            return
+        }
 
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error('Response is not JSON')
-            }
+        const res = await signIn('credentials', {
+            redirect: false,
+            email,
+            password
+        })
 
-            const data = await res.json()
-
-            if (!res.ok) {
-                throw new Error(data.message || 'Something went wrong')
-            }
-
-            // Handle successful login
-            onLogin(data.token)
-            handleClose()
-        } catch (error) {
-            setError(error.message)
+        if (res?.error) {
+            setError('Invalid email or password')
+        } else if (res?.url) {
+            router.replace('/user-dashboard')
         }
     }
 
@@ -51,6 +60,10 @@ export default function LoginModal({ onClose, onLogin }) {
         setTimeout(() => {
             onClose()
         }, 300) // Delay to match the animation duration
+    }
+
+    if (sessionStatus === 'loading') {
+        return <h1>Loading...</h1>
     }
 
     return (

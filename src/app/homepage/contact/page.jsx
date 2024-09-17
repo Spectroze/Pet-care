@@ -1,7 +1,7 @@
 import React from 'react'
-import { Input } from '../../../components/ui/input'
-import { Textarea } from '../../../components/ui/Textarea'
-import { Button } from '../../../components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/Textarea'
+import { Button } from '@/components/ui/button'
 export default function Contact() {
     return (
         <section id="contact" className="py-20 px-6 md:px-12">
